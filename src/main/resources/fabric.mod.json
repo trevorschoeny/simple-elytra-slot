@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "id": "simpleelytraslot",
+  "version": "${version}",
+  "name": "Simple Elytra Slot",
+  "description": "A slot for your elytra, so you can wear a chestplate and still glide. Goes with Inventory Plus.",
+  "authors": [
+    "trevorschoeny"
+  ],
+  "contact": {
+    "homepage": "https://modrinth.com/mod/simple-elytra-slot",
+    "sources": "https://github.com/trevorschoeny/simple-elytra-slot"
+  },
+  "license": "MIT",
+  "environment": "*",
+  "mixins": [
+    "simpleelytraslot.mixins.json"
+  ],
+  "entrypoints": {
+    "main": [
+      "com.trevorschoeny.simpleelytraslot.SimpleElytraSlot"
+    ],
+    "client": [
+      "com.trevorschoeny.simpleelytraslot.SimpleElytraSlotClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.15.0",
+    "fabric-api": "*",
+    "minecraft": "~26.3",
+    "menukit": ">=7.1.0 <8.0.0",
+    "slotkit": ">=1.1.0 <2.0.0"
+  },
+  "suggests": {
+    "inventoryplus": "*"
+  },
+  "breaks": {
+    "inventoryplus": "<2.0.0"
+  },
+  "custom": {
+    "slotkit": {
+      "bothSides": "required"
+    },
+    "configkit": {
+      "suite": "inventoryplus"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.trevorschoeny.simpleelytraslot.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "mixins": [
+    "ElytraSlotGlideMixin",
+    "ElytraSlotIconMixin"
+  ],
+  "client": [
+    "client.ElytraSlotExtractMixin",
+    "client.ElytraSlotRenderStateMixin",
+    "client.ElytraSlotWingsMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
