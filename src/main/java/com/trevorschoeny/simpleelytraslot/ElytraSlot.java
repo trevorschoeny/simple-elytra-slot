@@ -94,7 +94,10 @@ public final class ElytraSlot {
                         // Shift-clicked elytra land here first (SlotKit 1.1 routes it).
                         // With this slot full, a second one goes where vanilla sends
                         // it, the chest slot included (decision 11).
-                        .shiftClickIn(true))
+                        .shiftClickIn(true)
+                        // The outline is vanilla's own getNoItemIcon pass (SlotSpec.emptyIcon,
+                        // SlotKit 1.1); no mixin of ours needed.
+                        .emptyIcon(EMPTY_ICON))
                 .register();
     }
 
