@@ -78,7 +78,7 @@ public final class ElytraSlot {
                 // (no Simple Totem Slot: this slot sits directly on the offhand).
                 // On a screen without the offhand (a chest) the panel is skipped.
                 .on(SlotGroupCategory.PLAYER_OFFHAND)
-                .at(PanelPosition.region(OutsideRegion.TOP_ALIGN_LEFT).priority(COLUMN_ORDER), 0)
+                .at(PanelPosition.region(OutsideRegion.TOP_CENTER).priority(COLUMN_ORDER), 0)
                 .visibleWhen(ElytraSlotSettings::enabled)
                 // A slot isn't solid, so a transparent panel eats no clicks around it.
                 .opaque(false)
