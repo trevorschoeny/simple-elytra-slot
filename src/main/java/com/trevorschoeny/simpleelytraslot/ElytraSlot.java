@@ -52,8 +52,8 @@ public final class ElytraSlot {
 
     /**
      * Order in the column above the offhand: lower sits nearer the offhand. Totem 10,
-     * elytra 20, room for a firework slot (beryl-split.md, decision 5; Suite Manager
-     * owns the numbers).
+     * elytra 20, room for a firework slot. The numbers are shared across the mods in
+     * that column, so change them together.
      */
     public static final int COLUMN_ORDER = 20;
 
@@ -88,12 +88,11 @@ public final class ElytraSlot {
                         .label("Elytra slot")
                         .gate(GATE)
                         .binding(true)
-                        // Worn gear, so XP orbs mend it as vanilla mends worn armor
-                        // (beryl-split.md, decision 4).
+                        // Worn gear, so XP orbs mend it as vanilla mends worn armor.
                         .mending(true)
                         // Shift-clicked elytra land here first (SlotKit 1.1 routes it).
                         // With this slot full, a second one goes where vanilla sends
-                        // it, the chest slot included (decision 11).
+                        // it, the chest slot included.
                         .shiftClickIn(true)
                         // The outline is vanilla's own getNoItemIcon pass (SlotSpec.emptyIcon,
                         // SlotKit 1.1); no mixin of ours needed.
@@ -116,7 +115,7 @@ public final class ElytraSlot {
 
     /**
      * True for an elytra, the only item the slot takes. A literal item check rather than
-     * the glider component, on purpose: the mod is called Elytra Slot (spec decision 1).
+     * the glider component, on purpose: the mod is called Elytra Slot.
      */
     public static boolean isElytra(ItemStack stack) {
         return stack.is(Items.ELYTRA);

@@ -51,8 +51,8 @@ dependencies {
 
 loom {
     // src/main holds what a server loads (the slot, the glide); src/client holds the
-    // slot's look, the wings on the back, the HUD icon and the Inventory Plus integration. The compiler
-    // refuses a main class that reaches a client one.
+    // slot's look, the wings on the back, the HUD icon and the Inventory Plus
+    // integration. The compiler refuses a main class that reaches a client one.
     splitEnvironmentSourceSets()
     mods {
         simpleelytraslot {
