@@ -1,10 +1,8 @@
 package com.trevorschoeny.simpleelytraslot;
 
-import com.trevlar.menukit.api.panel.PanelStyle;
-import com.trevlar.menukit.api.panel.OutsideRegion;
-import com.trevlar.menukit.api.panel.PanelPosition;
 import com.trevlar.slotkit.api.group.SlotGroupCategory;
-import com.trevlar.slotkit.api.slot.ContainerPanel;
+import com.trevlar.slotkit.api.group.SlotGroupId;
+import com.trevlar.slotkit.api.slot.ParityGroup;
 import com.trevlar.slotkit.api.slot.SlotSpec;
 import com.trevlar.slotkit.api.storage.Storage;
 import com.trevlar.slotkit.api.storage.StorageAttachment;
@@ -21,11 +19,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 /**
- * The elytra slot: its storage, what it accepts, and its SlotKit panel.
+ * The elytra slot: its storage and what it accepts. The panel that shows it is the
+ * client's {@code ElytraSlotPanel}.
  *
  * <p>One real synced slot backed by a 1-stack player attachment, declared as a SlotKit
- * {@link ContainerPanel} at common init, so SlotKit builds it on every container menu
- * on both sides with no mixin of ours. Vanilla's equipment loops never see it, so the
+ * {@link ParityGroup} at common init, so SlotKit builds it on every container menu on
+ * both sides with no mixin of ours. Vanilla's equipment loops never see it, so the
  * two vanilla mechanics it needs are added by mixin: the glide
  * ({@code ElytraSlotGlideMixin}) and the wings on the back (the client
  * {@code ElytraSlot*} render mixins). Curse of Binding and Mending are SlotKit's
@@ -39,7 +38,10 @@ public final class ElytraSlot {
 
     private ElytraSlot() {}
 
-    /** The panel id; SlotKit derives the group's id from it ({@link #GROUP_ID}). */
+    /**
+     * The group's owner id, also the client panel's id. SlotKit derives the group's id
+     * from it ({@link #GROUP_ID}); it was the 1.x container panel id, so the id is unchanged.
+     */
     public static final String PANEL_ID = SimpleElytraSlot.MOD_ID + ":elytra";
     public static final String GROUP = "slot";
 
@@ -58,8 +60,7 @@ public final class ElytraSlot {
     public static final int COLUMN_ORDER = 20;
 
     /** The slot's group, for SlotKit lookups (operations, Reach, locks). */
-    public static final com.trevlar.slotkit.api.group.SlotGroupId.Created GROUP_ID =
-            ContainerPanel.groupId(PANEL_ID, GROUP);
+    public static final SlotGroupId.Created GROUP_ID = ParityGroup.idOf(PANEL_ID, GROUP);
 
     /** The faint elytra outline on the empty slot ({@code textures/gui/sprites/container/slot/elytra.png}). */
     public static final Identifier EMPTY_ICON =
@@ -68,36 +69,28 @@ public final class ElytraSlot {
     /** The elytra, saved with the player on the server. Drops on death as vanilla gear does. */
     private static PlayerStorageAttachment<NonNullList<ItemStack>> STORAGE;
 
+    /** The registered group; the client panel shows its slot. Set by {@link #register}. */
+    private static ParityGroup SLOT;
+
+    public static ParityGroup slot() { return SLOT; }
+
     /** Call once from the main entrypoint, on both sides. */
     public static void register() {
         STORAGE = StorageAttachment.playerAttached(SimpleElytraSlot.MOD_ID, "elytra", 1);
 
-        ContainerPanel.define(PANEL_ID)
-                // The column above the offhand: SlotKit stacks every panel on the offhand
-                // by priority, lowest nearest, and closes the gap when one is absent
-                // (no Simple Totem Slot: this slot sits directly on the offhand).
-                // On a screen without the offhand (a chest) the panel is skipped.
-                .on(SlotGroupCategory.PLAYER_OFFHAND)
-                .at(PanelPosition.region(OutsideRegion.TOP_CENTER).priority(COLUMN_ORDER), 0)
-                .visibleWhen(ElytraSlotSettings::enabled)
-                // A slot isn't solid, so a transparent panel eats no clicks around it.
-                .opaque(false)
-                .style(PanelStyle.NONE)
-                .addSlot(SlotSpec.at(GROUP, CATEGORY)
-                        .storage(p -> STORAGE.bind(p))
-                        .label("Elytra slot")
-                        .gate(GATE)
-                        .binding(true)
-                        // Worn gear, so XP orbs mend it as vanilla mends worn armor.
-                        .mending(true)
-                        // Shift-clicked elytra land here first (SlotKit 1.1 routes it).
-                        // With this slot full, a second one goes where vanilla sends
-                        // it, the chest slot included.
-                        .shiftClickIn(true)
-                        // The outline is vanilla's own getNoItemIcon pass (SlotSpec.emptyIcon,
-                        // SlotKit 1.1); no mixin of ours needed.
-                        .emptyIcon(EMPTY_ICON))
-                .register();
+        SLOT = ParityGroup.register(PANEL_ID, SlotSpec.at(GROUP, CATEGORY)
+                .storage(p -> STORAGE.bind(p))
+                .label("Elytra slot")
+                .gate(GATE)
+                .binding(true)
+                // Worn gear, so XP orbs mend it as vanilla mends worn armor.
+                .mending(true)
+                // Shift-clicked elytra land here first. With this slot full, a second
+                // one goes where vanilla sends it, the chest slot included.
+                .shiftClickIn(true)
+                // The outline is vanilla's own getNoItemIcon pass (SlotSpec.emptyIcon);
+                // no mixin of ours needed.
+                .emptyIcon(EMPTY_ICON));
     }
 
     /**
