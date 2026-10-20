@@ -5,8 +5,6 @@ import com.trevorschoeny.simpleelytraslot.ElytraSlot;
 
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -73,7 +71,7 @@ public class SlotChecks implements FabricClientGameTest {
     private void gate() {
         command("item replace entity @p inventory.0 with minecraft:dirt 16");
         command("item replace entity @p inventory.1 with minecraft:elytra");
-        openInventory();
+        Ui.openInventory(ctx);
         Ui.click(ctx, Ui.inventory(9), "dirt stack");
         Ui.click(ctx, Ui.ELYTRA, "elytra slot");
         expect(slot().isEmpty(), "dirt went into the elytra slot");
@@ -125,7 +123,7 @@ public class SlotChecks implements FabricClientGameTest {
     /** A Curse of Binding elytra can't be taken out in survival, by click or shift-click. */
     private void binding() {
         fill("minecraft:elytra[enchantments={\"minecraft:binding_curse\":1}]");
-        openInventory();
+        Ui.openInventory(ctx);
         Ui.click(ctx, Ui.ELYTRA, "elytra slot");
         expect(slot().is(Items.ELYTRA), "a bound elytra was picked out of the slot");
         expect(ctx.computeOnClient(mc -> mc.player.containerMenu.getCarried().isEmpty()), "a bound elytra came out onto the cursor");
@@ -138,7 +136,7 @@ public class SlotChecks implements FabricClientGameTest {
     /** Puts {@code item} in the slot the player's way: into the inventory, then shift-click. */
     private void fill(String item) {
         command("item replace entity @p inventory.0 with " + item);
-        openInventory();
+        Ui.openInventory(ctx);
         Ui.shiftClick(ctx, Ui.inventory(9), item);
         ctx.setScreen(() -> null);
         ctx.waitTicks(2);
@@ -148,7 +146,7 @@ public class SlotChecks implements FabricClientGameTest {
     /** Shift-clicks anything in the slot back out, so each station starts empty. */
     private void emptySlot() {
         if (slot().isEmpty()) return;
-        openInventory();
+        Ui.openInventory(ctx);
         Ui.shiftClick(ctx, Ui.ELYTRA, "elytra slot");
         ctx.setScreen(() -> null);
         ctx.waitTicks(2);
@@ -169,11 +167,6 @@ public class SlotChecks implements FabricClientGameTest {
         ctx.getInput().releaseKey(o -> o.keyJump);
         ctx.waitTicks(ticks);
         return onServer(ServerPlayer::isFallFlying);
-    }
-
-    private void openInventory() {
-        ctx.setScreen(() -> new InventoryScreen(Minecraft.getInstance().player));
-        ctx.waitTicks(3);
     }
 
     /** The slot's elytra as the server holds it. */

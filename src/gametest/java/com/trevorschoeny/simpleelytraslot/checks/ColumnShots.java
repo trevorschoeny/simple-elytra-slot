@@ -6,9 +6,9 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContext;
 import net.fabricmc.loader.api.FabricLoader;
+import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
-import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
@@ -17,11 +17,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The column above the offhand, on the survival inventory and creative's Survival Inventory tab:
- * where the elytra slot sits (checked), and how it looks (shot, for Trev). Run alone it checks the
- * elytra slot directly on the offhand; with {@code -PwithTotem} it checks the totem slot on the
- * offhand and the elytra slot on the totem slot, no gap. Shots are named for which it was:
- * {@code elytra-alone-*} or {@code elytra-with-totem-*}, each empty and filled.
+ * Where the elytra slot sits (checked) and how it looks (screenshots), on the survival inventory
+ * and creative's Survival Inventory tab, empty and filled, then from behind in third person.
+ *
+ * <p>Survival: alone, the elytra slot sits directly on the offhand; with {@code -PwithTotem}, the
+ * totem slot sits on the offhand and the elytra slot on the totem slot, no gap. Creative: the
+ * column sits right of the armor, centred on its height. Shots are named {@code elytra-alone-*}
+ * or {@code elytra-with-totem-*}.
  */
 public class ColumnShots implements FabricClientGameTest {
 
@@ -55,7 +57,7 @@ public class ColumnShots implements FabricClientGameTest {
 
             // Fill the column the player's way: shift-click from the inventory, in survival.
             command("gamemode survival @a");
-            openSurvival();
+            Ui.openInventory(ctx);
             Ui.shiftClick(ctx, Ui.inventory(9), "elytra");
             if (totem) Ui.shiftClick(ctx, Ui.inventory(10), "totem");
             ctx.setScreen(() -> null);
@@ -70,7 +72,7 @@ public class ColumnShots implements FabricClientGameTest {
 
     private void survival(String state) {
         command("gamemode survival @a");
-        openSurvival();
+        Ui.openInventory(ctx);
         layout("survival");
         shoot("survival-" + state);
     }
@@ -150,7 +152,7 @@ public class ColumnShots implements FabricClientGameTest {
     private void thirdPerson() {
         command("gamemode survival @a");
         command("execute as @p at @s run tp @s ~ ~ ~ 0 10");
-        ctx.runOnClient(mc -> mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_BACK));
+        ctx.runOnClient(mc -> mc.options.setCameraType(CameraType.THIRD_PERSON_BACK));
         ctx.waitTicks(10);
         ctx.takeScreenshot("elytra-" + tag + "-third-person");
         // Vanilla for comparison: the same enchanted elytra worn in the chest slot.
@@ -158,12 +160,7 @@ public class ColumnShots implements FabricClientGameTest {
         ctx.waitTicks(10);
         ctx.takeScreenshot("elytra-" + tag + "-third-person-vanilla-worn");
         command("item replace entity @p armor.chest with minecraft:diamond_chestplate");
-        ctx.runOnClient(mc -> mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON));
-    }
-
-    private void openSurvival() {
-        ctx.setScreen(() -> new InventoryScreen(Minecraft.getInstance().player));
-        ctx.waitTicks(3);
+        ctx.runOnClient(mc -> mc.options.setCameraType(CameraType.FIRST_PERSON));
     }
 
     private void shoot(String name) {

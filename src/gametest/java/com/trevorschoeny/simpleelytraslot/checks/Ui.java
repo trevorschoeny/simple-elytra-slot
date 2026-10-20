@@ -9,6 +9,7 @@ import com.trevorschoeny.simpleelytraslot.ElytraSlot;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.input.MouseButtonInfo;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.Slot;
@@ -100,6 +101,12 @@ final class Ui {
                     .invokeOnButton(mc.getWindow().handle(), new MouseButtonInfo(InputConstants.MOUSE_BUTTON_LEFT, 1), action));
             ctx.waitTick();
         }
+        ctx.waitTicks(3);
+    }
+
+    /** Opens the survival inventory, as pressing E does. */
+    static void openInventory(ClientGameTestContext ctx) {
+        ctx.setScreen(() -> new InventoryScreen(Minecraft.getInstance().player));
         ctx.waitTicks(3);
     }
 

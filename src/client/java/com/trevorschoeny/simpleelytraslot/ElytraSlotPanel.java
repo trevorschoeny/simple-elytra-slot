@@ -27,7 +27,7 @@ import java.util.function.BooleanSupplier;
  *       without the offhand (a chest) there is no box to anchor to, so it's skipped.</li>
  *   <li><b>Creative's inventory tab:</b> its offhand sits under the tab row, with no room
  *       above for two slots, so the column moves to the right of the armor instead,
- *       centred on the armor's height (Trev, 2026-10-20).</li>
+ *       centred on the armor's height.</li>
  * </ul>
  */
 final class ElytraSlotPanel {
