@@ -2,6 +2,7 @@ package com.trevorschoeny.simpleelytraslot.checks;
 
 import com.google.gson.JsonObject;
 import com.trevorschoeny.simpleelytraslot.ElytraSlot;
+import com.trevorschoeny.simpleelytraslot.ElytraSlotSettings;
 
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
@@ -42,7 +43,11 @@ public class SlotChecks implements FabricClientGameTest {
             run("simpleelytraslot:stops_at_one", this::stopsAtOne);
             run("simpleelytraslot:worn_wins", this::wornWins);
             run("simpleelytraslot:mending", this::mending);
+            run("simpleelytraslot:hidden_slot", this::hiddenSlot);
+            run("simpleelytraslot:mending_off", this::mendingOff);
             run("simpleelytraslot:binding", this::binding);
+        } finally {
+            ElytraSlotSettings.reset();   // the integrated server and the client share these
         }
         if (!failures.isEmpty()) throw new AssertionError("elytra slot checks failed:\n- " + String.join("\n- ", failures));
     }
@@ -118,6 +123,45 @@ public class SlotChecks implements FabricClientGameTest {
         for (int i = 0; i < 5; i++) command("execute at @p run summon experience_orb ~ ~ ~ {Value:20}");
         ctx.waitTicks(40);
         expect(slot().getDamageValue() < 200, "XP orbs didn't repair the slot's Mending elytra");
+    }
+
+    /**
+     * Show the elytra slot off: shift-click puts no elytra in the slot, and an elytra already
+     * in it still glides. Settings are plain statics, shared by the client and the integrated
+     * server in this run, so setting them here is what the menu does.
+     */
+    private void hiddenSlot() {
+        try {
+            ElytraSlotSettings.setShowSlot(false);
+            command("item replace entity @p inventory.0 with minecraft:elytra");
+            command("item replace entity @p armor.chest with minecraft:diamond_chestplate");
+            Ui.openInventory(ctx);
+            Ui.shiftClick(ctx, Ui.inventory(9), "elytra");
+            ctx.setScreen(() -> null);
+            expect(slot().isEmpty(), "shift-click put an elytra in the hidden slot");
+
+            ElytraSlotSettings.setShowSlot(true);
+            emptySlot();
+            fill("minecraft:elytra");
+            command("item replace entity @p armor.chest with minecraft:diamond_chestplate");
+            ElytraSlotSettings.setShowSlot(false);
+            expect(flyFor(45), "the hidden slot's elytra didn't glide");
+        } finally {
+            ElytraSlotSettings.setShowSlot(true);
+        }
+    }
+
+    /** Mending repairs the slot's elytra off: XP orbs leave it alone. */
+    private void mendingOff() {
+        try {
+            ElytraSlotSettings.setMending(false);
+            fill("minecraft:elytra[damage=200,enchantments={\"minecraft:mending\":1}]");
+            for (int i = 0; i < 5; i++) command("execute at @p run summon experience_orb ~ ~ ~ {Value:20}");
+            ctx.waitTicks(40);
+            expect(slot().getDamageValue() == 200, "XP orbs repaired the slot's elytra with Mending turned off");
+        } finally {
+            ElytraSlotSettings.setMending(true);
+        }
     }
 
     /** A Curse of Binding elytra can't be taken out in survival, by click or shift-click. */

@@ -48,8 +48,10 @@ final class ElytraSlotPanel {
             FabricLoader.getInstance().isModLoaded("simpletotemslot") ? -4 : -13;
 
     static void register() {
-        // Hidden while the mod is off, and wherever the server has no slot to show.
-        BooleanSupplier live = () -> ElytraSlotSettings.enabled() && ClientSlots.isShown(ElytraSlot.GROUP_ID);
+        // Hidden while the mod is off or the slot is set hidden, and wherever the server
+        // has no slot to show.
+        BooleanSupplier live = () -> ElytraSlotSettings.enabled() && ElytraSlotSettings.showSlot()
+                && ClientSlots.isShown(ElytraSlot.GROUP_ID);
 
         // gap(0) keeps stacked slot panels on vanilla's 18 px pitch; the host's default
         // 2 px gap would set the slot off the grid.

@@ -20,7 +20,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * Captures the slot's elytra into the render state alongside vanilla's own equipment
  * extraction. {@code extractHumanoidRenderState} is the shared static both the mob and
  * player renderers go through, so this covers every render context. Players only;
- * everything else keeps EMPTY, and so does a player while the mod is off.
+ * everything else keeps EMPTY, and so does a player while the mod is off or "Show the
+ * slot's elytra on players" is. That setting is this client's view of every player: with
+ * EMPTY here, neither the wings nor the cape mixin sees an elytra, so the cape returns.
  */
 @Mixin(HumanoidMobRenderer.class)
 public class ElytraSlotExtractMixin {
@@ -29,7 +31,7 @@ public class ElytraSlotExtractMixin {
     private static void simpleElytraSlot$stashElytra(LivingEntity livingEntity,
                                                      HumanoidRenderState state, float partialTick,
                                                      ItemModelResolver resolver, CallbackInfo ci) {
-        ItemStack elytra = livingEntity instanceof Player player && ElytraSlotSettings.enabled()
+        ItemStack elytra = livingEntity instanceof Player player && ElytraSlotSettings.enabled() && ElytraSlotSettings.showWings()
                 ? ElytraSlot.get(player)                 // already a detached copy
                 : ItemStack.EMPTY;
         ((ElytraHolder) state).simpleElytraSlot$setElytra(elytra);

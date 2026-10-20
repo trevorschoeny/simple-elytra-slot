@@ -1,5 +1,7 @@
 package com.trevorschoeny.simpleelytraslot.checks;
 
+import com.trevorschoeny.simpleelytraslot.ElytraSlotSettings;
+
 import net.fabricmc.fabric.api.client.creativetab.v1.FabricCreativeModeInventoryScreen;
 import net.fabricmc.fabric.api.client.gametest.v1.FabricClientGameTest;
 import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
@@ -167,6 +169,11 @@ public class ColumnShots implements FabricClientGameTest {
         ctx.setScreen(() -> null);
         ctx.waitTicks(10);
         ctx.takeScreenshot("elytra-" + tag + "-third-person");
+        // "Show the slot's elytra on players" off: no wings, and the cape is back.
+        ElytraSlotSettings.setShowWings(false);
+        ctx.waitTicks(3);
+        ctx.takeScreenshot("elytra-" + tag + "-third-person-wings-hidden");
+        ElytraSlotSettings.setShowWings(true);
         // Vanilla for comparison: the same enchanted elytra worn in the chest slot.
         command("item replace entity @p armor.chest with minecraft:elytra[enchantments={\"minecraft:unbreaking\":3}]");
         ctx.waitTicks(10);

@@ -2,6 +2,7 @@ package com.trevorschoeny.simpleelytraslot;
 
 import com.trevlar.slotkit.api.group.SlotGroupCategory;
 import com.trevlar.slotkit.api.group.SlotGroupId;
+import com.trevlar.slotkit.api.slot.MendingCandidates;
 import com.trevlar.slotkit.api.slot.ParityGroup;
 import com.trevlar.slotkit.api.slot.SlotSpec;
 import com.trevlar.slotkit.api.storage.Storage;
@@ -18,6 +19,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+import java.util.List;
+
 /**
  * The elytra slot: its storage and what it accepts. The panel that shows it is the
  * client's {@code ElytraSlotPanel}.
@@ -27,9 +30,9 @@ import net.minecraft.world.item.Items;
  * both sides with no mixin of ours. Vanilla's equipment loops never see it, so the
  * two vanilla mechanics it needs are added by mixin: the glide
  * ({@code ElytraSlotGlideMixin}) and the wings on the back (the client
- * {@code ElytraSlot*} render mixins). Curse of Binding and Mending are SlotKit's
- * (declared on the group), and the death drop is SlotKit's attachment default, which
- * follows vanilla and keepInventory.
+ * {@code ElytraSlot*} render mixins). Curse of Binding is SlotKit's (declared on the
+ * group), Mending goes through SlotKit's repair pool while its setting allows, and the
+ * death drop is SlotKit's attachment default, which follows vanilla and keepInventory.
  *
  * <p>Kept the same shape as Simple Totem Slot's {@code TotemSlot}: the two mods share
  * one column (above the offhand, or right of the armor in creative) and differ only
@@ -87,24 +90,37 @@ public final class ElytraSlot {
                 .label("Elytra slot")
                 .gate(GATE)
                 .binding(true)
-                // Worn gear, so XP orbs mend it as vanilla mends worn armor.
-                .mending(true)
                 // Shift-clicked elytra land here first. With this slot full, a second
                 // one goes where vanilla sends it, the chest slot included.
                 .shiftClickIn(true)
                 // The outline is vanilla's own getNoItemIcon pass (SlotSpec.emptyIcon);
                 // no mixin of ours needed.
                 .emptyIcon(EMPTY_ICON));
+
+        // Worn gear, so XP orbs mend it as vanilla mends worn armor, unless the Mending
+        // setting is off. Offered per orb rather than declared on the group, so the
+        // setting takes effect at once. SlotKit applies vanilla's checks (damaged, has
+        // Mending) and the repair math.
+        MendingCandidates.register(player -> {
+            if (!ElytraSlotSettings.enabled() || !ElytraSlotSettings.mending()) return List.of();
+            Storage storage = STORAGE.bind(player);
+            ItemStack elytra = storage.getStack(0);   // a detached copy, written back once repaired
+            if (elytra.isEmpty()) return List.of();
+            return List.of(new MendingCandidates.Candidate() {
+                @Override public ItemStack stack() { return elytra; }
+                @Override public void onRepaired() { storage.setStack(0, elytra); }
+            });
+        });
     }
 
     /**
-     * Elytra only, one at a time. Placing is refused while the mod is off, which also
-     * stops shift-click routing into the hidden slot; taking out is always allowed
-     * (binding aside).
+     * Elytra only, one at a time. Placing is refused while the mod is off or the slot is
+     * hidden, which also stops shift-click routing into a slot nobody can see; taking out
+     * is always allowed (binding aside).
      */
     private static final SlotGate GATE = new SlotGate() {
         @Override public boolean mayPlace(ItemStack stack, GatingContext ctx) {
-            return ElytraSlotSettings.enabled() && isElytra(stack);
+            return ElytraSlotSettings.enabled() && ElytraSlotSettings.showSlot() && isElytra(stack);
         }
         @Override public boolean mayPickup(Player player, GatingContext ctx) { return true; }
         @Override public int maxStackSize(ItemStack stack, int vanillaMax) { return Math.min(1, vanillaMax); }
