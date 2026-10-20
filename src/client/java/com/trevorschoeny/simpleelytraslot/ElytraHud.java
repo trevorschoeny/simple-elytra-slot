@@ -1,8 +1,6 @@
 package com.trevorschoeny.simpleelytraslot;
 
-import com.trevlar.menukit.api.element.ItemDisplay;
 import com.trevlar.menukit.api.hud.HudPanel;
-import com.trevlar.menukit.api.panel.OutsideRegion;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -10,25 +8,23 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * A small elytra icon left of the hotbar while the slot holds one, or while one is worn
- * in the chest slot, so it means the same thing however the wings were equipped. Icon
- * only, no count. Priority 20 stacks it above Simple Totem Slot's icon (priority 10)
- * in the same region (menukit docs/recipes.md, "Put an icon beside the hotbar").
+ * The slot's elytra on the HUD while it holds one, or while one is worn in the chest slot,
+ * so it means the same thing however the wings were equipped: in a hotbar slot scaled to
+ * fit MenuKit's status column, between the hearts and the hunger bar, just above the XP
+ * level number. Priority 20, above Simple Totem Slot's (priority 10), as the two slots
+ * stack in the inventory. No count, durability left on.
  */
 final class ElytraHud {
 
     private ElytraHud() {}
 
-    private static final int ICON_SIZE = 12;
-
     static void register() {
         HudPanel.builder(ElytraSlot.PANEL_ID + "_hud")
-                .region(OutsideRegion.LEFT_ALIGN_BOTTOM)
+                .statusColumn()
                 .priority(20)
-                .offset(0, -3)
                 .visibleWhen(() -> ElytraSlotSettings.hudIcon() && !shown().isEmpty())
-                .element(ItemDisplay.builder().item(ElytraHud::shown)
-                        .size(ICON_SIZE, ICON_SIZE).hideCount().hideDurability().build())
+                // The column's shared scale, so every mod's icons match.
+                .slot(0, 0).item(ElytraHud::shown).hideCount().scale(HudPanel.STATUS_SCALE).done()
                 .build();
     }
 
