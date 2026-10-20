@@ -67,7 +67,10 @@ public final class ElytraSlot {
     public static final Identifier EMPTY_ICON =
             Identifier.fromNamespaceAndPath(SimpleElytraSlot.MOD_ID, "container/slot/elytra");
 
-    /** The elytra, saved with the player on the server. Drops on death as vanilla gear does. */
+    /**
+     * The elytra, saved with the player on the server. Drops on death as vanilla gear does.
+     * Sent to every client tracking the player too, since other players see it as wings.
+     */
     private static PlayerStorageAttachment<NonNullList<ItemStack>> STORAGE;
 
     /** The registered group; the client panel shows its slot. Set by {@link #register}. */
@@ -77,7 +80,7 @@ public final class ElytraSlot {
 
     /** Call once from the main entrypoint, on both sides. */
     public static void register() {
-        STORAGE = StorageAttachment.playerAttached(SimpleElytraSlot.MOD_ID, "elytra", 1);
+        STORAGE = StorageAttachment.playerAttachedVisible(SimpleElytraSlot.MOD_ID, "elytra", 1);
 
         SLOT = ParityGroup.register(PANEL_ID, SlotSpec.at(GROUP, CATEGORY)
                 .storage(p -> STORAGE.bind(p))
