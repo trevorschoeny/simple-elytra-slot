@@ -32,7 +32,8 @@ import net.minecraft.world.item.Items;
  * follows vanilla and keepInventory.
  *
  * <p>Kept the same shape as Simple Totem Slot's {@code TotemSlot}: the two mods share
- * one column above the offhand and differ only in the item and the order number.
+ * one column (above the offhand, or right of the armor in creative) and differ only
+ * in the item and the order number.
  */
 public final class ElytraSlot {
 

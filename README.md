@@ -1,3 +1,3 @@
 # Simple Elytra Slot
 
-Placeholder. The public description is written in Notion and synced here at stage 7.
+A slot above your offhand for an elytra, so you can wear a chestplate and still glide.

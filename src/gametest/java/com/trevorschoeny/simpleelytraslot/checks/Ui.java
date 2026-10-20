@@ -42,7 +42,7 @@ final class Ui {
 
     /** The player's inventory slot {@code i} (9..35 main, 0..8 hotbar). */
     static Predicate<Slot> inventory(int i) {
-        return s -> s.container instanceof Inventory && s.getContainerSlot() == i && CreatedSlot.of(s) == null;
+        return s -> s.container instanceof Inventory && s.getContainerSlot() == i;
     }
 
     /** The open screen's slot matching {@code p}, or null. */

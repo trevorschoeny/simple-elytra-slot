@@ -40,7 +40,7 @@ final class ElytraSlotPanel {
      * 33), so the shift is (45 - 18 * slots) / 2: 13 for the elytra alone, 4 for the pair.
      * Simple Totem Slot applies the same shift, so the pair moves together.
      *
-     * <p>ponytail: "the pair" means Simple Totem Slot is installed, decided at client
+     * <p>Known limit: "the pair" means Simple Totem Slot is installed, decided at client
      * start. With it installed but its slot hidden (its own Off, or a server without it),
      * the elytra sits half a slot high. A per-frame centred region in MenuKit would fix that.
      */

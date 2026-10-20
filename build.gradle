@@ -127,18 +127,17 @@ processResources {
 }
 
 // ── Modrinth Publishing ────────────────────────────────────────────────
-// Simple Elytra Slot (slug simple-elytra-slot). Lead creates the project and fills in its id.
-// Lead @ Trevlar Mods owns the publish.
+// Simple Elytra Slot (slug simple-elytra-slot).
 modrinth {
     token = System.getenv("MODRINTH_TOKEN")
-    projectId = ""   // Lead fills this in when the project is created, at Trev's release approval
+    projectId = ""   // set once the Modrinth project exists
     versionNumber = property('simpleelytraslot_version')
     versionName = "Simple Elytra Slot ${property('simpleelytraslot_version')}"
     versionType = "release"
-    // ci-cd.md stage 5: the player-facing changelog lives in changelog.md, one entry,
-    // overwritten each release (git keeps the history).
+    // The player-facing changelog lives in changelog.md, one entry, overwritten each
+    // release (git keeps the history).
     changelog = file('changelog.md').text
-    // ci-cd.md stage 7: the README is the public description; `modrinthSyncBody` pushes it.
+    // The README is the public description; `modrinthSyncBody` pushes it.
     syncBodyFrom = file('README.md').text
     // 26.x: no remap step, `jar` IS the shippable artifact.
     uploadFile = jar
@@ -189,7 +188,7 @@ tasks.register('verifyKitRanges') {
         if (depends['menukit-containers'] != null) {
             throw new GradleException(
                 "fabric.mod.json: depends on 'menukit-containers'. Containers is SlotKit now: " +
-                "depend on 'slotkit' instead (Amethyst spec 4.1).")
+                "depend on 'slotkit' instead.")
         }
         kits.each { id, prop ->
             def declared = depends[id]?.toString()
@@ -212,7 +211,7 @@ tasks.register('verifyKitRanges') {
                 throw new GradleException(
                     "fabric.mod.json: '${id}' is '${declared}', expected '${expected}'. This mod is " +
                     "built against ${id} ${version}, so it floors at that major.minor and stops " +
-                    "below the next major. See guidelines/ci-cd.md, 'MenuKit version pinning'.")
+                    "below the next major.")
             }
             println "verifyKitRanges: ${id} '${expected}' (built against ${version})"
         }
