@@ -44,7 +44,8 @@ public class ColumnShots implements FabricClientGameTest {
             ctx.runOnClient(mc -> { mc.options.guiScale().set(4); mc.resizeGui(); });
             for (String c : new String[]{"gamerule advance_time false", "gamerule show_advancement_messages false",
                     "time set 6000", "gamemode survival @a", "clear @a",
-                    "item replace entity @p inventory.0 with minecraft:elytra",
+                    // Enchanted, so the shots also show whether the glint carries onto the wings.
+                    "item replace entity @p inventory.0 with minecraft:elytra[enchantments={\"minecraft:unbreaking\":3}]",
                     "item replace entity @p inventory.1 with minecraft:totem_of_undying",
                     "item replace entity @p armor.chest with minecraft:diamond_chestplate",
                     "item replace entity @p hotbar.0 with minecraft:firework_rocket 16"}) command(c);
@@ -62,6 +63,7 @@ public class ColumnShots implements FabricClientGameTest {
 
             survival("filled");
             creative("filled");
+            thirdPerson();
         }
         if (!failures.isEmpty()) throw new AssertionError("column checks failed (" + tag + "):\n- " + String.join("\n- ", failures));
     }
@@ -142,6 +144,21 @@ public class ColumnShots implements FabricClientGameTest {
             return upperName + " at " + u[0] + "," + u[1] + "; expected one slot above the " + lowerName
                     + " at " + l[0] + "," + (l[1] - PITCH);
         return null;
+    }
+
+    /** From behind in third person: the slot's wings, with their glint, over the chestplate. */
+    private void thirdPerson() {
+        command("gamemode survival @a");
+        command("execute as @p at @s run tp @s ~ ~ ~ 0 10");
+        ctx.runOnClient(mc -> mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_BACK));
+        ctx.waitTicks(10);
+        ctx.takeScreenshot("elytra-" + tag + "-third-person");
+        // Vanilla for comparison: the same enchanted elytra worn in the chest slot.
+        command("item replace entity @p armor.chest with minecraft:elytra[enchantments={\"minecraft:unbreaking\":3}]");
+        ctx.waitTicks(10);
+        ctx.takeScreenshot("elytra-" + tag + "-third-person-vanilla-worn");
+        command("item replace entity @p armor.chest with minecraft:diamond_chestplate");
+        ctx.runOnClient(mc -> mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON));
     }
 
     private void openSurvival() {
