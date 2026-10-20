@@ -94,8 +94,8 @@ public class ColumnShots implements FabricClientGameTest {
      * The column, read off the open screen. On the survival inventory: each slot in the offhand's
      * column, one pitch above the slot below it. Totem 10 sits on the offhand and elytra 20 on the
      * totem; with no totem slot the elytra slot closes the gap and sits on the offhand. On
-     * creative, which wraps the offhand in a slot of its own, SlotKit finds the offhand and this
-     * checks that each column slot is shown inside the window, not over the tabs or outside it.
+     * creative's inventory tab the column sits right of the armor, centred on its height, at the
+     * positions Simple Totem Slot's check expects too, and inside the window.
      */
     private void layout(String screen) {
         String problem = ctx.computeOnClient(mc -> {
@@ -103,7 +103,10 @@ public class ColumnShots implements FabricClientGameTest {
             if (elytra == null || !elytra.isActive()) return "no elytra slot shown";
             if (totem && (totemSlot == null || !totemSlot.isActive())) return "no totem slot shown";
             if (screen.equals("creative")) {
-                String e = insideWindow(mc, elytra, "elytra slot");
+                // Right of the armor, centred on its height: elytra over totem, or alone level with the offhand.
+                String e = at(elytra, "elytra slot", 126, totem ? 11 : 20);
+                if (e == null && totem) e = at(totemSlot, "totem slot", 126, 29);
+                if (e == null) e = insideWindow(mc, elytra, "elytra slot");
                 return e != null || !totem ? e : insideWindow(mc, totemSlot, "totem slot");
             }
             Slot offhand = Ui.find(mc, Ui.OFFHAND);
@@ -117,6 +120,11 @@ public class ColumnShots implements FabricClientGameTest {
             return onTop(mc, elytra, below, "elytra slot", totem ? "totem slot" : "offhand");
         });
         if (problem != null) failures.add(screen + ": " + problem);
+    }
+
+    /** The slot at (x, y) in the screen's own coordinates, or what's wrong. */
+    private static String at(Slot slot, String name, int x, int y) {
+        return slot.x == x && slot.y == y ? null : name + " at " + slot.x + "," + slot.y + ", expected " + x + "," + y;
     }
 
     /** The slot's 18 px frame lies inside the screen's window (its background image). */
