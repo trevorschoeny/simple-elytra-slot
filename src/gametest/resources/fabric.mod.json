@@ -8,5 +8,8 @@
       "com.trevorschoeny.simpleelytraslot.checks.SlotChecks",
       "com.trevorschoeny.simpleelytraslot.checks.ColumnShots"
     ]
-  }
+  },
+  "mixins": [
+    "simpleelytraslot_checks.mixins.json"
+  ]
 }

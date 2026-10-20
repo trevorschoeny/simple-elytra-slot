@@ -65,7 +65,7 @@ public class SlotChecks implements FabricClientGameTest {
         }
     }
 
-    // ── Stations ─────────────────────────────────────────────────────────
+    // Stations
 
     /** Dirt is refused; an elytra is taken. */
     private void gate() {
@@ -131,7 +131,7 @@ public class SlotChecks implements FabricClientGameTest {
         expect(slot().is(Items.ELYTRA), "a bound elytra was shift-clicked out of the slot");
     }
 
-    // ── Helpers ──────────────────────────────────────────────────────────
+    // Helpers
 
     /** Puts {@code item} in the slot the player's way: into the inventory, then shift-click. */
     private void fill(String item) {

@@ -1,0 +1,8 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.trevorschoeny.simpleelytraslot.checks.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": ["TestCapeMixin"],
+  "injectors": { "defaultRequire": 1 }
+}

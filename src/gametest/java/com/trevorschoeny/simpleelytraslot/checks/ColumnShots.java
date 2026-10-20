@@ -148,11 +148,23 @@ public class ColumnShots implements FabricClientGameTest {
         return null;
     }
 
-    /** From behind in third person: the slot's wings, with their glint, over the chestplate. */
+    /**
+     * From behind in third person, with a cape (the self-checks give every player one): the
+     * slot's wings over the chestplate, with the cape hidden as a worn elytra hides it. First
+     * the slot emptied, so the cape is seen to draw at all.
+     */
     private void thirdPerson() {
         command("gamemode survival @a");
         command("execute as @p at @s run tp @s ~ ~ ~ 0 10");
+        Ui.openInventory(ctx);
+        Ui.shiftClick(ctx, Ui.ELYTRA, "elytra slot");
+        ctx.setScreen(() -> null);
         ctx.runOnClient(mc -> mc.options.setCameraType(CameraType.THIRD_PERSON_BACK));
+        ctx.waitTicks(10);
+        ctx.takeScreenshot("elytra-" + tag + "-third-person-cape-no-elytra");
+        Ui.openInventory(ctx);
+        Ui.shiftClick(ctx, Ui.inventory(9), "elytra");
+        ctx.setScreen(() -> null);
         ctx.waitTicks(10);
         ctx.takeScreenshot("elytra-" + tag + "-third-person");
         // Vanilla for comparison: the same enchanted elytra worn in the chest slot.

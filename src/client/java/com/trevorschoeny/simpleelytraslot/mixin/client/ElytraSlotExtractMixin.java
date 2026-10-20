@@ -30,7 +30,7 @@ public class ElytraSlotExtractMixin {
                                                      HumanoidRenderState state, float partialTick,
                                                      ItemModelResolver resolver, CallbackInfo ci) {
         ItemStack elytra = livingEntity instanceof Player player && ElytraSlotSettings.enabled()
-                ? ElytraSlot.get(player).copy()
+                ? ElytraSlot.get(player)                 // already a detached copy
                 : ItemStack.EMPTY;
         ((ElytraHolder) state).simpleElytraSlot$setElytra(elytra);
     }

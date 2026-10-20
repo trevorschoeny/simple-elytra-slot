@@ -39,9 +39,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  *   <li><b>Durability and crash guard.</b> Vanilla wears the glider down in
  *       {@code updateFallFlying} by picking a random glide-capable <em>equipment</em>
  *       slot. Gliding on the slot's elytra, that list is empty and {@code Util.getRandom}
- *       would crash. So this wraps the pick: on an empty list it damages the slot's
- *       elytra as vanilla would, and returns the BODY slot (always empty for players)
- *       so vanilla's own {@code hurtAndBreak} does nothing. At durability 1 the
+ *       would crash. So this wraps the pick: for a player with an empty list it damages
+ *       the slot's elytra as vanilla would, and returns the BODY slot (always empty for
+ *       players) so vanilla's own {@code hurtAndBreak} does nothing. Any other entity
+ *       keeps vanilla's pick. At durability 1 the
  *       next-damage-breaks check in {@code canGlideUsing} fails, {@code canGlide} turns
  *       false and flight stops, as in vanilla.</li>
  * </ul>
@@ -71,14 +72,12 @@ public abstract class ElytraSlotGlideMixin {
                     target = "Lnet/minecraft/util/Util;getRandom(Ljava/util/List;Lnet/minecraft/util/RandomSource;)Ljava/lang/Object;"))
     private Object simpleElytraSlot$wear(List<EquipmentSlot> slots, RandomSource random,
                                          Operation<Object> original) {
-        if (!slots.isEmpty()) {
-            return original.call(slots, random);         // a worn glider exists, vanilla wears it
+        // A worn glider exists (vanilla wears it), or this isn't a player: vanilla's own pick.
+        if (!slots.isEmpty() || !((Object) this instanceof Player player)) {
+            return original.call(slots, random);
         }
-        // Gliding off the slot's elytra (no worn glider): vanilla's list is empty.
-        LivingEntity self = (LivingEntity) (Object) this;
-        if (self instanceof Player player) {
-            ElytraSlot.wear(player, self, 1);
-        }
+        // A player gliding off the slot's elytra (no worn glider): vanilla's list is empty.
+        ElytraSlot.wear(player, (LivingEntity) (Object) this, 1);
         return EquipmentSlot.BODY;                       // a player's BODY item is empty, so vanilla's hurtAndBreak does nothing
     }
 }
