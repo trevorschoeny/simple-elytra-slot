@@ -35,8 +35,8 @@ import java.util.List;
  * death drop is SlotKit's attachment default, which follows vanilla and keepInventory.
  *
  * <p>Kept the same shape as Simple Totem Slot's {@code TotemSlot}: the two mods share
- * one column (above the offhand, or right of the armor in creative) and differ only
- * in the item and the order number.
+ * one panel, {@code trevlar:gear} (above the offhand, or right of the armor in creative),
+ * and differ only in the item and the order number.
  */
 public final class ElytraSlot {
 
@@ -55,13 +55,6 @@ public final class ElytraSlot {
      * player is flying on, and the armor category means vanilla's four slots.
      */
     public static final SlotGroupCategory CATEGORY = new SlotGroupCategory(SimpleElytraSlot.MOD_ID, "elytra");
-
-    /**
-     * Order in the column above the offhand: lower sits nearer the offhand. Totem 10,
-     * elytra 20, room for a firework slot. The numbers are shared across the mods in
-     * that column, so change them together.
-     */
-    public static final int COLUMN_ORDER = 20;
 
     /** The slot's group, for SlotKit lookups (operations, Reach, locks). */
     public static final SlotGroupId.Created GROUP_ID = ParityGroup.idOf(PANEL_ID, GROUP);

@@ -2,6 +2,7 @@ package com.trevorschoeny.simpleelytraslot;
 
 import com.trevlar.menukit.api.element.RenderContext;
 import com.trevlar.menukit.api.hud.HudPanel;
+import com.trevlar.menukit.api.panel.ModeScope;
 import com.trevlar.menukit.api.panel.OutsideRegion;
 
 import net.minecraft.client.Minecraft;
@@ -43,7 +44,7 @@ final class ElytraHud {
     private static final Identifier HOTBAR = Identifier.withDefaultNamespace("hud/hotbar");
 
     static void register() {
-        HudPanel.builder(ElytraSlot.PANEL_ID + "_hud")
+        HudPanel.builder(ElytraSlot.PANEL_ID + "_hud", ModeScope.BOTH)
                 .region(OutsideRegion.TOP_ALIGN_RIGHT)
                 .priority(20)
                 .gap(GAP)

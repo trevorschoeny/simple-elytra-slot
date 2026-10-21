@@ -23,9 +23,9 @@ import java.util.List;
  * and creative's Survival Inventory tab, empty and filled, then from behind in third person.
  *
  * <p>Survival: alone, the elytra slot sits directly on the offhand; with {@code -PwithTotem}, the
- * totem slot sits on the offhand and the elytra slot on the totem slot, no gap. Creative: the
- * column sits right of the armor, centred on its height. Shots are named {@code elytra-alone-*}
- * or {@code elytra-with-totem-*}.
+ * totem slot sits on the offhand and the elytra slot on the totem slot, no gap. Creative's
+ * inventory tab: the column sits right of the armor, from its top. Creative's item tabs: no
+ * column. Shots are named {@code elytra-alone-*} or {@code elytra-with-totem-*}.
  */
 public class ColumnShots implements FabricClientGameTest {
 
@@ -93,15 +93,33 @@ public class ColumnShots implements FabricClientGameTest {
         });
         ctx.waitTicks(3);
         layout("creative");
-        shoot("creative-" + state);
+        Ui.parkCursor(ctx);
+        ctx.takeScreenshot("elytra-" + tag + "-creative-" + state);
+        itemTab(state);
+    }
+
+    /** A creative item tab has no armor, so the gear column isn't there: no slot shown or live. */
+    private void itemTab(String state) {
+        ctx.runOnClient(mc -> ((FabricCreativeModeInventoryScreen) mc.gui.screen()).setSelectedTab(
+                CreativeModeTabs.allTabs().stream().filter(t -> t.getType() == CreativeModeTab.Type.CATEGORY)
+                        .findFirst().orElseThrow()));
+        ctx.waitTicks(3);
+        String shown = ctx.computeOnClient(mc -> {
+            Slot elytra = Ui.find(mc, Ui.ELYTRA), totemSlot = Ui.find(mc, Ui.TOTEM);
+            if (elytra != null && elytra.isActive()) return "elytra slot shown on an item tab";
+            if (totemSlot != null && totemSlot.isActive()) return "totem slot shown on an item tab";
+            return null;
+        });
+        if (shown != null) failures.add("creative item tab: " + shown);
+        shoot("creative-item-tab-" + state);
     }
 
     /**
      * The column, read off the open screen. On the survival inventory: each slot in the offhand's
      * column, one pitch above the slot below it. Totem 10 sits on the offhand and elytra 20 on the
      * totem; with no totem slot the elytra slot closes the gap and sits on the offhand. On
-     * creative's inventory tab the column sits right of the armor, centred on its height, at the
-     * positions Simple Totem Slot's check expects too, and inside the window.
+     * creative's inventory tab the column sits right of the armor, from its top, at the positions
+     * Simple Totem Slot's check expects too, and inside the window.
      */
     private void layout(String screen) {
         String problem = ctx.computeOnClient(mc -> {
@@ -109,9 +127,9 @@ public class ColumnShots implements FabricClientGameTest {
             if (elytra == null || !elytra.isActive()) return "no elytra slot shown";
             if (totem && (totemSlot == null || !totemSlot.isActive())) return "no totem slot shown";
             if (screen.equals("creative")) {
-                // Right of the armor, centred on its height: elytra over totem, or alone level with the offhand.
-                String e = at(elytra, "elytra slot", 126, totem ? 11 : 20);
-                if (e == null && totem) e = at(totemSlot, "totem slot", 126, 29);
+                // Right of the armor, from its top: elytra level with the leggings, the totem under it.
+                String e = at(elytra, "elytra slot", 126, 6);
+                if (e == null && totem) e = at(totemSlot, "totem slot", 126, 24);
                 if (e == null) e = insideWindow(mc, elytra, "elytra slot");
                 return e != null || !totem ? e : insideWindow(mc, totemSlot, "totem slot");
             }
