@@ -130,7 +130,7 @@ processResources {
 // Simple Elytra Slot (slug simple-elytra-slot).
 modrinth {
     token = System.getenv("MODRINTH_TOKEN")
-    projectId = ""   // set once the Modrinth project exists
+    projectId = "ERspRjUt"   // set once the Modrinth project exists
     versionNumber = property('simpleelytraslot_version')
     versionName = "Simple Elytra Slot ${property('simpleelytraslot_version')}"
     versionType = "release"
