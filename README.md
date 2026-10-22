@@ -26,7 +26,7 @@ It has to be installed on the server as well as the client. In singleplayer, you
 
 ### With Simple Totem Slot
 
-- The totem slot sits on your offhand and the elytra slot sits right above it, in one column. In creative the column is to the right of your armor.
+- The totem slot sits on your offhand and the elytra slot sits right above it, in one column. In creative, the column sits to the right of your armor, centered on it, on the Survival Inventory tab.
 
 ### With Inventory Plus
 
@@ -36,8 +36,8 @@ It has to be installed on the server as well as the client. In singleplayer, you
 ## Requirements
 
 - [Fabric API](https://modrinth.com/mod/fabric-api)
-- [MenuKit](https://modrinth.com/mod/menukit) 7.3.0 or newer, below 8.0.0, which draws the slot and the icon beside the hotbar.
-- [SlotKit](https://modrinth.com/mod/slotkit) 2.0.0 or newer, below 3.0.0, which adds the slot to your inventory, saves it with your player on the server, and checks that a joining player has the mod.
+- [MenuKit](https://modrinth.com/mod/menukit) 7.4.0 or newer, below 8.0.0, which draws the slot and the icon beside the hotbar.
+- [SlotKit](https://modrinth.com/mod/slotkit) 2.1.0 or newer, below 3.0.0, which adds the slot to your inventory, saves it with your player on the server, and checks that a joining player has the mod.
 
 ## Pairs well with
 
@@ -57,7 +57,7 @@ Open your inventory. The elytra slot is directly above your offhand.
 - Drag an elytra into it, or shift-click one in your inventory. Other items can't go in it. If the slot already holds an elytra, a second one goes wherever vanilla sends it, which can be your chest armor slot.
 - Shift-click the slot to move its elytra back into your inventory.
 - On a chest or other container screen the slot isn't shown, and the elytra stays in it.
-- In creative, open the Survival Inventory tab (the chest icon). There the slot sits to the right of your armor.
+- In creative, open the Survival Inventory tab (the chest icon). There the slot sits to the right of your armor, centered on it.
 - Curse of Binding keeps an elytra in the slot in survival.
 - Mending repairs the slot's elytra from XP, as it does worn armor. This can be turned off in the settings.
 - When you die, the slot's elytra drops with the rest of your gear, and it's kept when the keepInventory game rule is on.
