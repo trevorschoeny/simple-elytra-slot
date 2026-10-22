@@ -21,7 +21,7 @@ import com.trevlar.slotkit.api.slot.SlotPlacement;
  *   <li><b>Survival and container screens:</b> the column sits on the offhand, the totem
  *       nearest it. On a screen without the offhand (a chest) it isn't placed.</li>
  *   <li><b>Creative's inventory tab:</b> its offhand sits under the tab row, with no room
- *       above for two slots, so the column goes right of the armour, from its top. On an
+ *       above for two slots, so the column goes right of the armour, centred on it. On an
  *       item tab there's no armour, so no column.</li>
  * </ul>
  *
@@ -50,7 +50,7 @@ final class ElytraSlotPanel {
                 .in(ModeScope.SURVIVAL, SlotPlacement.group(SlotGroupCategory.PLAYER_OFFHAND,
                         PanelPosition.region(OutsideRegion.TOP_CENTER).gap(0)))
                 .in(ModeScope.CREATIVE, SlotPlacement.group(SlotGroupCategory.PLAYER_ARMOR,
-                        PanelPosition.region(OutsideRegion.RIGHT_ALIGN_TOP).gap(0)))
+                        PanelPosition.region(OutsideRegion.RIGHT_CENTER).gap(0)))
                 .style(PanelStyle.NONE)
                 .vertical()
                 .gap(0)
