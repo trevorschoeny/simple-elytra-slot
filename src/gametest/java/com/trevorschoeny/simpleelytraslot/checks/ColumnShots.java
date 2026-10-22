@@ -24,7 +24,7 @@ import java.util.List;
  *
  * <p>Survival: alone, the elytra slot sits directly on the offhand; with {@code -PwithTotem}, the
  * totem slot sits on the offhand and the elytra slot on the totem slot, no gap. Creative's
- * inventory tab: the column sits right of the armor, from its top. Creative's item tabs: no
+ * inventory tab: the column sits right of the armor, centred on it. Creative's item tabs: no
  * column. Shots are named {@code elytra-alone-*} or {@code elytra-with-totem-*}.
  */
 public class ColumnShots implements FabricClientGameTest {
@@ -118,7 +118,7 @@ public class ColumnShots implements FabricClientGameTest {
      * The column, read off the open screen. On the survival inventory: each slot in the offhand's
      * column, one pitch above the slot below it. Totem 10 sits on the offhand and elytra 20 on the
      * totem; with no totem slot the elytra slot closes the gap and sits on the offhand. On
-     * creative's inventory tab the column sits right of the armor, from its top, at the positions
+     * creative's inventory tab the column sits right of the armor, centred on it, at the positions
      * Simple Totem Slot's check expects too, and inside the window.
      */
     private void layout(String screen) {
@@ -127,9 +127,11 @@ public class ColumnShots implements FabricClientGameTest {
             if (elytra == null || !elytra.isActive()) return "no elytra slot shown";
             if (totem && (totemSlot == null || !totemSlot.isActive())) return "no totem slot shown";
             if (screen.equals("creative")) {
-                // Right of the armor, from its top: elytra level with the leggings, the totem under it.
-                String e = at(elytra, "elytra slot", 126, 6);
-                if (e == null && totem) e = at(totemSlot, "totem slot", 126, 24);
+                // Right of the armor, centred on it (MenuKit's RIGHT_CENTER): flush right of the
+                // armor, the column's middle within a pixel of the armor's, totem under elytra.
+                String e = besideArmorCentred(mc, elytra, totem ? totemSlot : elytra);
+                if (e == null && totem && (totemSlot.x != elytra.x || totemSlot.y != elytra.y + PITCH))
+                    e = "totem slot at " + totemSlot.x + "," + totemSlot.y + ", expected right under the elytra slot";
                 if (e == null) e = insideWindow(mc, elytra, "elytra slot");
                 return e != null || !totem ? e : insideWindow(mc, totemSlot, "totem slot");
             }
@@ -146,9 +148,25 @@ public class ColumnShots implements FabricClientGameTest {
         if (problem != null) failures.add(screen + ": " + problem);
     }
 
-    /** The slot at (x, y) in the screen's own coordinates, or what's wrong. */
-    private static String at(Slot slot, String name, int x, int y) {
-        return slot.x == x && slot.y == y ? null : name + " at " + slot.x + "," + slot.y + ", expected " + x + "," + y;
+    /**
+     * The column from {@code top} to {@code bottom} sits flush right of the four armor slots
+     * and its middle is within a pixel of theirs (an odd height can't centre exactly).
+     */
+    private static String besideArmorCentred(Minecraft mc, Slot top, Slot bottom) {
+        int right = Integer.MIN_VALUE, minY = Integer.MAX_VALUE, maxY = Integer.MIN_VALUE;
+        for (int i = 36; i <= 39; i++) {
+            Slot armor = Ui.find(mc, Ui.inventory(i).and(Slot::isActive));
+            if (armor == null) return "no armor slot " + i + " shown";
+            right = Math.max(right, armor.x);
+            minY = Math.min(minY, armor.y);
+            maxY = Math.max(maxY, armor.y);
+        }
+        if (top.x != right + PITCH) return "column at x " + top.x + ", expected flush right of the armor at " + (right + PITCH);
+        // Doubled, to compare middles in whole numbers.
+        int armorMid = minY + maxY + 16, columnMid = top.y + bottom.y + 16;
+        if (Math.abs(armorMid - columnMid) > 2)
+            return "column " + top.y + ".." + (bottom.y + 16) + " isn't centred on the armor " + minY + ".." + (maxY + 16);
+        return null;
     }
 
     /** The slot's 18 px frame lies inside the screen's window (its background image). */
