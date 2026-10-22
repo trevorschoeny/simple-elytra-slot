@@ -21,8 +21,8 @@ import com.trevlar.slotkit.api.slot.SlotPlacement;
  *   <li><b>Survival and container screens:</b> the column sits on the offhand, the totem
  *       nearest it. On a screen without the offhand (a chest) it isn't placed.</li>
  *   <li><b>Creative's inventory tab:</b> its offhand sits under the tab row, with no room
- *       above for two slots, so the column goes right of the armour, centred on it. On an
- *       item tab there's no armour, so no column.</li>
+ *       above for two slots, so the column goes right of the armor, centered on it. On an
+ *       item tab there's no armor, so no column.</li>
  * </ul>
  *
  * <p>The declaration (placements, style, axis, gap) must stay identical to Simple Totem

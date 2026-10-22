@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 /**
  * The Elytra Slot tab in Inventory Plus's settings menu, laid out as Simple Totem Slot's
  * tab: the frame IP's tabs have (title, description, Reset to Defaults, On/Off, a line),
- * then the settings, greyed while the mod is off. Reads {@link ElytraSlotSettings} every
+ * then the settings, grayed while the mod is off. Reads {@link ElytraSlotSettings} every
  * frame and writes through its setters, which save.
  */
 final class ElytraSettingsTab {
@@ -35,7 +35,7 @@ final class ElytraSettingsTab {
     /** The tab's id: IP's column switch opens it on Ctrl-click. */
     static final String TAB_ID = SimpleElytraSlot.MOD_ID;
 
-    /** A divider's colour on the inventory look, as on IP's own tabs. */
+    /** A divider's color on the inventory look, as on IP's own tabs. */
     private static final int LINE_COLOR = 0xFF8B8B8B;
 
     /** Call once from client init, before the menu can be opened. */
